@@ -34,7 +34,6 @@ defmodule AdventOfCode.Day02 do
     else
       false -> false
     end
-    |> IO.inspect()
   end
 
   @spec process_line(binary()) :: {:ok, integer()} | :error
@@ -42,7 +41,6 @@ defmodule AdventOfCode.Day02 do
     {game_number, rest} = get_game_number(line)
 
     result = get_rounds(rest)
-    IO.inspect(result, label: "result")
 
     with true <- is_bigger?(result) do
       {:ok, game_number}
@@ -60,9 +58,19 @@ defmodule AdventOfCode.Day02 do
         :error -> acc
       end
     end)
-    |> IO.inspect()
   end
 
-  def part2(_args) do
+  def part2(input) do
+    input
+    |> String.split(~r{\n}, trim: true)
+    |> Enum.map(fn line ->
+      {_, rest} = get_game_number(line)
+
+      get_rounds(rest)
+      |> Map.values()
+      |> Enum.product()
+    end)
+    |> Enum.sum()
+    |> IO.inspect(label: "result")
   end
 end
