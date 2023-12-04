@@ -5,7 +5,16 @@ defmodule AdventOfCode.Day03Test do
 
   @tag :skip
   test "part1" do
-    input = nil
+    input = "467..114..
+...*......
+..35..633.
+......#...
+617*......
+.....+.58.
+..592.....
+......755.
+...$.*....
+.664.598.."
     result = part1(input)
 
     assert result
