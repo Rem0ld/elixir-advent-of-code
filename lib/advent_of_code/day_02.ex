@@ -71,6 +71,5 @@ defmodule AdventOfCode.Day02 do
       |> Enum.product()
     end)
     |> Enum.sum()
-    |> IO.inspect(label: "result")
   end
 end
