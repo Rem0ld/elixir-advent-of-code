@@ -8,12 +8,12 @@ defmodule AdventOfCode.Day03 do
     String.split(line, "", trim: true)
     |> IO.inspect(label: "char line")
     |> Enum.reduce(numbers, fn char, acc ->
-      with {:ok, val} <- Integer.parse(char) do
-        Map.update(acc, row_idx, [])
-      else
-        with true <- String.match?(char, regex) do
-        end
-      end
+      # with {:ok, val} <- Integer.parse(char) do
+      #   Map.update(acc, row_idx, [])
+      # else
+      #   with true <- String.match?(char, regex) do
+      #   end
+      # end
 
       acc
     end)
