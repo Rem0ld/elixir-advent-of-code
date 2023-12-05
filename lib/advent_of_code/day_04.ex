@@ -38,19 +38,29 @@ defmodule AdventOfCode.Day04 do
     end)
   end
 
-  def part2(_input) do
-    # to_working_list(input)
-    # |> IO.inspect()
-    # |> Enum.reduce( %{}, 
-    #   fn {game_number, winning_numbers_map, list}, {count, mul_map} = acc -> 
-    #     Map.update(mul_map, game_number, 1, fn el -> 
-    #       el + 1
-    #     end)
+  defp get_winnings(map, list) do
+    Enum.reduce(list, 0, fn el, acc ->
+      case Map.has_key?(map, el) do
+        true -> acc + 1
+        false -> acc
+      end
+    end)
+  end
+
+  # 8     - 7     - 6       5 
+  # 1 + 3 = 4 + 4 = 8 + 3 = 11 + 4 = 15
+
+  def part2(input) do
+    to_working_list(input)
+    |> Enum.reduce(%{}, fn {game_num, keys, values}, acc ->
+      Map.put(acc, game_num, get_winnings(keys, values))
+    end)
+    |> IO.inspect()
+
+    # |> Enum.reduce(%{}, fn {game_num, {_, keys, values}}, acc ->
+    #   win =
     #
-    #     result =
-    #       Enum.reduce(list, 0, fn el, inner_acc -> 
-    #         case Map.has_key?(winning_numbers_map, el)
-    #       end)
+    #   Map.put(acc, game_num, {1, win})
     # end)
   end
 end
