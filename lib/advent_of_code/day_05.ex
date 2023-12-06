@@ -1,38 +1,94 @@
 defmodule AdventOfCode.Day05 do
+  alias AdventOfCode.Tasks
+
   defp to_integer(list) do
     Enum.map(list, fn el -> String.to_integer(el) end)
   end
 
-  defp get_ranges({map, [h | t]}) do
-    [part1, part2] = String.split(h, ~r{\:}, trim: true)
-    [name, _] = String.split(part1)
-    IO.inspect(name, label: "name")
+  defp get_ranges({seed, [h | t]}, acc) do
+    [_, part2] = String.split(h, ~r{\:}, trim: true)
 
-    String.split(part2, ~r{\n}, trim: true)
-    |> IO.inspect()
-    |> Enum.map(fn el ->
-      [dest, source, len] =
-        String.split(el)
-        |> to_integer()
+    result =
+      String.split(part2, ~r{\n}, trim: true)
+      |> Enum.map(fn el ->
+        [dest, source, len] =
+          String.split(el)
+          |> to_integer()
 
-      {dest..(dest + len - 1), source..(source + len - 1)}
-    end)
-    |> IO.inspect(charlists: :as_lists)
+        length =
+          case len do
+            val when val <= 1 -> 1
+            _ -> len - 1
+          end
+
+        {dest..(dest + length), source..(source + length)}
+      end)
+
+    get_ranges({seed, t}, [result] ++ acc)
   end
 
-  defp get_seeds([h | t]) do
-    [name, list] = String.split(h, ~r{\:}, trim: true)
+  defp get_ranges({map, []}, acc), do: {map, Enum.reverse(acc)}
 
-    {%{name => String.split(list) |> to_integer()}, t}
+  defp get_seeds([h | t]) do
+    [_, list] = String.split(h, ~r{\:}, trim: true)
+
+    {String.split(list) |> to_integer(), t}
   end
 
   def part1(input) do
-    String.split(input, ~r{\n\n})
-    |> get_seeds()
-    |> IO.inspect()
-    |> get_ranges()
+    {seeds, list} =
+      String.split(input, ~r{\n\n})
+      |> get_seeds()
+      |> get_ranges([])
+
+    seeds
+    |> Enum.reduce(:infinity, fn seed, acc ->
+      result =
+        Tasks.find_destination(seed, list)
+
+      case result < acc do
+        true -> result
+        _ -> acc
+      end
+    end)
   end
 
-  def part2(_args) do
+  defp to_part_two({seeds, list}) do
+    result =
+      Enum.chunk_every(seeds, 2)
+      |> Enum.reduce([], fn [s, len], acc ->
+        l =
+          case len do
+            val when val <= 1 -> 1
+            _ -> len - 1
+          end
+
+        [s..(s + l)] ++ acc
+      end)
+      |> Enum.reverse()
+
+    {result, list}
+  end
+
+  defp with_tasks(seeds, list) do
+    tasks =
+      Enum.map(seeds, fn range ->
+        Task.async(fn -> Tasks.compute(range, list) end)
+      end)
+      |> IO.inspect(label: "tasks")
+
+    Task.await_many(tasks, :infinity)
+    |> IO.inspect(charlists: :to_lists)
+    |> Enum.min()
+  end
+
+  def part2(input) do
+    {seeds, list} =
+      String.split(input, ~r{\n\n})
+      |> get_seeds()
+      |> to_part_two()
+      |> get_ranges([])
+
+    with_tasks(seeds, list)
   end
 end
