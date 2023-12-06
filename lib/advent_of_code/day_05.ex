@@ -75,10 +75,8 @@ defmodule AdventOfCode.Day05 do
       Enum.map(seeds, fn range ->
         Task.async(fn -> Tasks.compute(range, list) end)
       end)
-      |> IO.inspect(label: "tasks")
 
     Task.await_many(tasks, :infinity)
-    |> IO.inspect(charlists: :to_lists)
     |> Enum.min()
   end
 

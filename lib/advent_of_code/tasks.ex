@@ -1,4 +1,8 @@
 defmodule AdventOfCode.Tasks do
+  def to_integer(list) do
+    Enum.map(list, fn el -> String.to_integer(el) end)
+  end
+
   def find_destination(seed, list) do
     list
     |> Enum.reduce(seed, fn tuples, acc ->
@@ -26,6 +30,5 @@ defmodule AdventOfCode.Tasks do
         _ -> acc
       end
     end)
-    |> IO.inspect(label: "compute")
   end
 end
