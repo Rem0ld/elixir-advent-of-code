@@ -47,20 +47,30 @@ defmodule AdventOfCode.Day04 do
     end)
   end
 
-  # 8     - 7     - 6       5 
-  # 1 + 3 = 4 + 4 = 8 + 3 = 11 + 4 = 15
-
   def part2(input) do
     to_working_list(input)
     |> Enum.reduce(%{}, fn {game_num, keys, values}, acc ->
-      Map.put(acc, game_num, get_winnings(keys, values))
+      Map.put(acc, game_num, {get_winnings(keys, values), 1})
     end)
     |> IO.inspect()
+    |> Enum.reduce(%{}, fn map ->
+      # w > 1 && n = copies * n 
+      win =
+        Stream.unfold({1, map}, fn {count, {_, {win, cop}} = inner_map} ->
+          if count >= win do
+            nil
+          else
+            new_map =
+              Map.update(inner_map, count, 1, fn {inner_win, inner_cop} ->
+                {inner_win, inner_cop + cop}
+              end)
 
-    # |> Enum.reduce(%{}, fn {game_num, {_, keys, values}}, acc ->
-    #   win =
-    #
-    #   Map.put(acc, game_num, {1, win})
-    # end)
+            {count + 1, new_map}
+          end
+        end)
+        |> Enum.take(4)
+
+      win
+    end)
   end
 end

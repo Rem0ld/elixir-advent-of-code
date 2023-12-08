@@ -48,7 +48,6 @@ defmodule AdventOfCode.Day06 do
 
   def part2(input) do
     parse_input_p2(input)
-    |> IO.inspect(charlists: :to_lists)
     |> get_combinations()
   end
 end
