@@ -10,7 +10,8 @@ KK677 28
 KTJJT 220
 QQQJA 483
 QQQQQ 222
-Q2QQQ 222"
+Q2QQQ 222
+44334 49"
     result = part1(input)
 
     assert result
